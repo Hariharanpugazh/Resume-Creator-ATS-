@@ -46,12 +46,14 @@ def login_user(request):
             return JsonResponse({'error': 'Invalid email or password'}, status=401)
 
 
+# Set up logging
+logger = logging.getLogger(__name__)
 @csrf_exempt
 def save_user_info(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-
+            
             # Extract fields from the request
             personal_info = data.get('personalInfo', {})
             email = personal_info.get('email')
@@ -66,6 +68,9 @@ def save_user_info(request):
             experience = data.get('experience', [])
             skills = data.get('skills', [])
 
+            # Ensure skills is a list of strings
+            skills_str = ",".join([skill['label'] for skill in skills if isinstance(skill, dict) and 'label' in skill])
+
             # Create a new UserInfo record
             user_info = UserInfo.objects.create(
                 email=email,
@@ -73,21 +78,22 @@ def save_user_info(request):
                 phone=phone,
                 address=address,
                 professional_summary=data.get('professionalSummary', ''),
-                social_links= data.get("socialLinks"),
+                social_links=data.get("socialLinks", {}),
                 fresher_or_professional=data.get('fresherOrProfessional', ''),
-                education=education,
-                skills=",".join([skill.get('label', '') for skill in skills]),
-                projects=projects,
-                experience=experience,
-                certifications=certifications,
-                achievements=achievements,
-                languages=languages
+                education=education,  # Pass lists directly if using JSONField
+                skills=skills_str,  # Join skills list into a comma-separated string
+                projects=projects,  # Pass lists directly if using JSONField
+                experience=experience,  # Pass lists directly if using JSONField
+                certifications=certifications,  # Pass lists directly if using JSONField
+                achievements=achievements,  # Pass lists directly if using JSONField
+                languages=languages  # Pass lists directly if using JSONField
             )
 
             return JsonResponse({'message': 'User info saved successfully'}, status=201)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON format'}, status=400)
         except Exception as e:
+            logger.error(f'An unexpected error occurred: {str(e)}', exc_info=True)
             return JsonResponse({'error': f'An unexpected error occurred: {str(e)}'}, status=500)
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
@@ -116,12 +122,18 @@ def sanitize_field(field, default):
 
 logger = logging.getLogger(__name__)
 
+# Set up logging
+logger = logging.getLogger(__name__)
+
 def fetch_latest_user_info(request):
     try:
         latest_user = UserInfo.objects.order_by('-last_modified').first()
 
         if not latest_user:
             return JsonResponse({"error": "No user data found"}, status=404)
+
+        # Decode social_links JSON string to a dictionary
+        social_links = latest_user.social_links or {}
 
         # Ensure socialLinks are included
         user_data = {
@@ -133,11 +145,10 @@ def fetch_latest_user_info(request):
             },
             "professionalSummary": latest_user.professional_summary,
             "socialLinks": {
-                "linkedIn": latest_user.social_links.get("linkedIn", ""),
-                "github": latest_user.social_links.get("github", ""),
-                "twitter": latest_user.social_links.get("twitter", ""),
+                "linkedIn": social_links.get("linkedIn", ""),
+                "github": social_links.get("github", ""),
+                "twitter": social_links.get("twitter", ""),
             },
-            
             "education": latest_user.education if isinstance(latest_user.education, list) else [],
             "skills": latest_user.skills.split(",") if latest_user.skills else [],
             "certifications": latest_user.certifications if isinstance(latest_user.certifications, list) else [],
