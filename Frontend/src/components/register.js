@@ -54,65 +54,84 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-        <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
-          <h2 className="mb-6 text-2xl font-bold text-center">Register</h2>
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-                minLength={6}
-              />
-            </div>
-            <button
-  type="submit"
-  className="flex items-center justify-center w-full py-2 text-white bg-blue-500 rounded-md"
->
-  {isLoading ? 'Registering...' : 'Register'}
-  <ArrowRight className="ml-2" size={20} />
-</button>
-
-          </form>
-          <div className="mt-4 text-center">
-            <a href="/login" className="text-blue-500 hover:underline">
-              Already have an account? Login
-            </a>
-          </div>
-        </div>
-        <ToastContainer />
+    <div
+      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black relative overflow-hidden"
+    >
+      <div className="absolute inset-0 grid grid-cols-12 gap-2 pointer-events-none">
+        {Array.from({ length: 144 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-2 h-2 bg-gray-600 opacity-10 transition-all duration-300 rounded-full hover:bg-blue-500 hover:opacity-80 hover:scale-150 transform"
+            style={{ animation: `pulse ${(Math.random() * 2 + 2).toFixed(2)}s infinite` }}
+          ></div>
+        ))}
       </div>
+      <div className="relative z-10 w-full max-w-md p-8 bg-gradient-to-r from-white via-gray-100 to-gray-200 rounded-3xl shadow-2xl shadow-blue-500/50 hover:shadow-blue-700 hover:scale-105 transform transition duration-500">
+        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800 font-sans tracking-wide animate-fade-in">Create an Account</h2>
+        <form onSubmit={handleRegister} className="space-y-6">
+          <div className="relative animate-slide-in-up">
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition" size={20} />
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter your username"
+              value={formData.username}
+              onChange={handleInputChange}
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              required
+            />
+          </div>
+          <div className="relative animate-slide-in-up delay-100">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition" size={20} />
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              required
+            />
+          </div>
+          <div className="relative animate-slide-in-up delay-200">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 transition" size={20} />
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              required
+              minLength={6}
+            />
+          </div>
+          <button
+            type="submit"
+            className="flex items-center justify-center w-full py-3 text-lg font-medium text-white bg-gradient-to-r from-blue-500 to-teal-500 hover:scale-110 transform transition duration-300 rounded-lg shadow-lg"
+          >
+            {isLoading ? 'Registering...' : 'Register'}
+            <ArrowRight className="ml-2 animate-bounce" size={20} />
+          </button>
+        </form>
+        <div className="mt-6 text-center animate-fade-in">
+          <a href="/login" className="text-blue-600 hover:underline">
+            Already have an account? Login
+          </a>
+        </div>
+      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
